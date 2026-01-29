@@ -1,9 +1,8 @@
 pipeline {
     agent any
     
-    // This connects the Jenkins tools you configured earlier
     tools {
-        nodejs 'node' // Use the name you gave in Global Tool Configuration
+        nodejs 'node' 
     }
 
     environment {
@@ -21,9 +20,10 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def scannerHome = tool 'sonar-scanner' // Use the name from Global Tool Configuration
+                    // Use bat for Windows
+                    def scannerHome = tool 'sonar-scanner'
                     withSonarQubeEnv("${env.SONAR_SERVER}") {
-                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=simple-project"
+                        bat "${scannerHome}\\bin\\sonar-scanner.bat -Dsonar.projectKey=simple-project"
                     }
                 }
             }
@@ -31,15 +31,16 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                // Building the image locally on the Jenkins agent
-                sh "docker build -t navyakankipati3093/simple-project:latest ."
+                // Use bat and make sure Navyakankipati03 is correct
+                bat "docker build -t Navyakankipati03/simple-project:latest ."
             }
         }
 
         stage('Docker Login & Push') {
             steps {
-                sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
-                sh "docker push navyakankipati3093/simple-project:latest"
+                // Windows handles variables a bit differently in bat
+                bat "docker login -u %DOCKERHUB_CREDENTIALS_USR% -p %DOCKERHUB_CREDENTIALS_PSW%"
+                bat "docker push Navyakankipati03/simple-project:latest"
             }
         }
     }
