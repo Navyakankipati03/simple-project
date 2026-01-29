@@ -30,3 +30,10 @@ spec:
     - port: 80
       targetPort: 3000
       nodePort: 30007
+spec:
+      containers:
+      - name: node-app
+        # Make sure there are no spaces or capital letters here
+        image: navyakankipati3093/simple-project:latest
+        ports:
+        - containerPort: 3000      
